@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>سبحه</title>
+  <style>
+    :root {
+      --bg-color: #e5e7eb;
+      --main-color-1: #1e3a8a;
+      --main-color-2: #172554;
+      --screen-bg: #000;
+      --lcd-bg: #ccc;
+      --whatsapp-color: #25D366;
+      --facebook-color: #1877F2;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #111827;
+      --lcd-bg: #ccc;
+    }
+
+    /* زر الثيم المتفاعل */
+    #themeToggle {
+      transition: all 0.3s ease;
+      background-color: #111827;
+      color: #fff;
+    }
+
+    [data-theme="dark"] #themeToggle {
+      background-color: #ffffff !important;
+      color: #000;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: var(--bg-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background-color 0.3s ease;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    button,
+    .color-dot {
+      -webkit-tap-highlight-color: transparent;
+      outline: none !important;
+      touch-action: manipulation;
+    }
+
+    .hasanat-badge {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      background: white;
+      border: 2px solid var(--main-color-1);
+      padding: 10px 15px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      transition: border-color 0.3s ease;
+    }
+
+    .hasanat-title {
+      font-size: 12px;
+      color: #666;
+      display: block;
+    }
+
+    .hasanat-count {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--main-color-1);
+      transition: color 0.3s ease;
+    }
+
+    .current-dhikr-card {
+      width: 75%;
+      max-width: 350px;
+      background: white;
+      border: 3px solid var(--main-color-1);
+      /* تم الربط هنا */
+      border-radius: 20px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      z-index: 5;
+      transform: translateY(-160px);
+      transition: border-color 0.3s ease;
+    }
+
+    .dhikr-text {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .counter-body {
+      width: 220px;
+      height: 280px;
+      background: linear-gradient(145deg, var(--main-color-1), var(--main-color-2));
+      border-radius: 60px 60px 110px 110px;
+      box-shadow: inset -5px -5px 15px rgba(0, 0, 0, 0.6), inset 5px 5px 15px rgba(255, 255, 255, 0.2), 0 20px 50px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      border: 1px solid var(--main-color-1);
+      transition: all 0.4s ease;
+      margin-top: -130px;
+    }
+
+    .counter-body::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 80px;
+      height: 550px;
+      background-color: #ccc;
+      top: 50%;
+      transform: translateY(-50%);
+      border-radius: 50px;
+    }
+
+    .screen-frame {
+      width: 170px;
+      background-color: var(--screen-bg);
+      border-radius: 12px;
+      margin-top: 25px;
+      padding: 8px;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+    }
+
+    .lcd-display {
+      background-color: var(--lcd-bg);
+      height: 65px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 45px;
+      font-weight: bold;
+      color: #2b3a30;
+    }
+
+    .reset-btn {
+      width: 35px;
+      height: 35px;
+      background: radial-gradient(circle, #f8fafc 0%, #94a3b8 100%);
+      border-radius: 50%;
+      border: 2px solid #64748b;
+      cursor: pointer;
+      position: absolute;
+      right: 20px;
+      top: 130px;
+      box-shadow: 0 4px 0 #475569;
+      transition: 0.05s all ease;
+    }
+
+    .count-btn {
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, #ffffff 0%, #cbd5e1 100%);
+      border-radius: 50%;
+      border: 5px solid #94a3b8;
+      cursor: pointer;
+      box-shadow: 0 10px 0 #64748b, 0 10px 20px rgba(0, 0, 0, 0.4);
+      margin-top: 50px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #334155;
+      transition: 0.05s all ease;
+    }
+
+    .reset-btn.is-active {
+      transform: translateY(4px) !important;
+      box-shadow: none !important;
+    }
+
+    .count-btn.is-active {
+      transform: translateY(10px) !important;
+      box-shadow: none !important;
+    }
+
+    .contact-section-bottom {
+      position: absolute;
+      bottom: 130px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    .contact-title {
+      font-weight: bold;
+      color: var(--main-color-1);
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 2px 8px;
+      border-radius: 10px;
+      transition: color 0.3s;
+    }
+
+    .social-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .social-link {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s;
+    }
+
+    .social-link img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .whatsapp-bg {
+      background-color: #25D366;
+    }
+
+    .facebook-bg {
+      background-color: #1877F2;
+    }
+
+    .bottom-left-stack {
+      position: absolute;
+      bottom: 130px;
+      left: 20px;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 12px;
+      z-index: 30;
+    }
+
+    .nav-btn {
+      background-color: var(--main-color-1);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .bottom-right-tools {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 5px;
+      z-index: 30;
+    }
+
+    .icon-btn {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      border-radius: 50%;
+      border: none;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      font-size: 22px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .color-menu {
+      position: absolute;
+      bottom: 130px;
+      right: 12px;
+      background: white;
+      padding: 8px;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transform: scale(0);
+      transform-origin: bottom right;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s all cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 200;
+    }
+
+    .color-menu.active {
+      transform: scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .color-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    .color-dot:hover {
+      transform: scale(1.1);
+    }
+
+    .azkar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-color);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .overlay-header {
+      background: var(--main-color-1);
+      color: white;
+      padding: 15px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      position: sticky;
+      top: 0;
+      transition: background-color 0.3s;
+    }
+
+    .dhikr-item {
+      background: white;
+      border: 2px solid var(--main-color-1);
+      /* تم الربط هنا */
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: right;
+      color: #333;
+      transition: border-color 0.3s ease;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hasanat-badge">
+    <span class="hasanat-title">عدد الحسنات</span>
+    <span class="hasanat-count" id="hasanatDisplay">0</span>
+  </div>
+
+  <div class="current-dhikr-card">
+    <span class="dhikr-text" id="activeDhikr">اللهم انك عفو كريم تحب العفو فاعفو عنى</span>
+  </div>
+
+  <div class="counter-body">
+    <div class="screen-frame">
+      <div class="lcd-display" id="display">0</div>
+    </div>
+    <span style="color:white; font-size:13px; position:absolute; right:17px; top:112px;">RESET</span>
+    <button class="reset-btn" id="resetBtn"></button>
+    <button class="count-btn" id="countBtn">اضغط</button>
+  </div>
+
+  <div class="contact-section-bottom">
+    <div class="contact-title">للتواصل معي</div>
+    <div class="social-row">
+      <a href="https://wa.me/201033558125" class="social-link whatsapp-bg" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+      </a>
+    </div>
+  </div>
+
+  <div class="bottom-left-stack">
+    <button class="nav-btn" onclick="openAzkar()">الأذكار</button>
+    <button class="nav-btn" onclick="addNewDhikr()">إضافة ذكر</button>
+  </div>
+
+  <div class="bottom-right-tools">
+    <button class="icon-btn" id="menuToggle">🎨</button>
+    <button class="icon-btn" id="themeToggle">🌙</button>
+  </div>
+
+  <div class="color-menu" id="colorMenu">
+    <div class="color-dot" style="background: #1e3a8a;" onclick="changeColor('#1e3a8a', '#172554')"></div>
+    <div class="color-dot" style="background: #065f46;" onclick="changeColor('#065f46', '#064e3b')"></div>
+    <div class="color-dot" style="background: #991b1b;" onclick="changeColor('#991b1b', '#7f1d1d')"></div>
+    <div class="color-dot" style="background: #d97706;" onclick="changeColor('#d97706', '#b45309')"></div>
+    <div class="color-dot" style="background: #6b21a8;" onclick="changeColor('#6b21a8', '#581c87')"></div>
+    <div class="color-dot" style="background: #64748b;" onclick="changeColor('#64748b', '#334155')"></div>
+    <div class="color-dot" style="background: #374151;" onclick="changeColor('#374151', '#111827')"></div>
+    <div class="color-dot" style="background: #be185d;" onclick="changeColor('#be185d', '#831843')"></div>
+  </div>
+
+  <div id="azkarOverlay" class="azkar-overlay">
+    <div class="overlay-header">
+      <button onclick="closeAzkar()"
+        style="background:white; color:var(--main-color-1); border:none; padding:5px 15px; border-radius:8px; font-weight:bold; cursor:pointer;">رجوع</button>
+      <h2 style="margin:0;">الأذكار</h2>
+      <div style="width:25px;"></div>
+    </div>
+    <div id="azkarList"></div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    const hasanatDisplay = document.getElementById('hasanatDisplay');
+    const countBtn = document.getElementById('countBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const themeToggle = document.getElementById('themeToggle');
+    const menuToggle = document.getElementById('menuToggle');
+    const colorMenu = document.getElementById('colorMenu');
+    const activeDhikrLabel = document.getElementById('activeDhikr');
+
+    let count = parseInt(localStorage.getItem('tasbihCount')) || 0;
+    let totalHasanat = parseInt(localStorage.getItem('totalHasanat')) || 0;
+    let isDark = localStorage.getItem('isDark') === 'true';
+    let activeDhikrText = localStorage.getItem('activeDhikr') || "اللهم انك عفو كريم تحب العفو فاعفو عنى";
+    let savedColors = JSON.parse(localStorage.getItem('themeColors')) || { c1: '#1e3a8a', c2: '#172554' };
+
+    const defaultAzkar = [
+      "لا إله إلا أنت سبحانك إني كنت من الظالمين",
+      "الحمد لله كما ينبغي لجلال وجهك وعظيم سلطانك",
+      "لا حول ولا قوة إلا بالله العلي العظيم",
+      "سبحان الله وبحمده عدد خلقه ورضا نفسه وزنه عرشه و مداد كلماته",
+      "سبحان الله وبحمده سبحان الله العظيم",
+      "أشهد أن لا اله الا الله وحده لا شريك له له الملك و له الحمد و هو على كل شئ قدير",
+      "أستغفر الله الذى لا اله الا هو الحى القيوم عدد خلقه و رضا نفسه وزنه عرشه ومداد كلماته",
+      "اللهم انك عفو كريم تحب العفو فاعفو عنى",
+      "لا اله الا الله وحده لا شريك له له الملك و له الحمد و هو على كل شئ قدير",
+      "سبحان الله",
+      "الحمد لله",
+      "لا اله الا الله",
+      "الله اكبر",
+      "لا حول ولا  قوه الا بالله"
+    ];
+
+    let dhikrList = JSON.parse(localStorage.getItem('myAzkarList')) || defaultAzkar;
+
+    function formatHasanat(num) {
+      if (num < 1000) return num;
+      if (num < 1000000) {
+        let thousands = num / 1000;
+        return thousands % 1 === 0 ? (thousands + " ألف") : (thousands.toFixed(1) + " ألف");
+      } else {
+        let millions = num / 1000000;
+        return millions % 1 === 0 ? (millions + " مليون") : (millions.toFixed(1) + " مليون");
+      }
+    }
+
+    function init() {
+      display.innerText = count;
+      hasanatDisplay.innerText = formatHasanat(totalHasanat);
+      activeDhikrLabel.innerText = activeDhikrText;
+      changeColor(savedColors.c1, savedColors.c2, false);
+      if (isDark) applyTheme(true);
+    }
+
+    function handleStart(e) {
+      if (e) e.preventDefault();
+      countBtn.classList.add('is-active');
+      count++; totalHasanat++;
+      display.innerText = count;
+      hasanatDisplay.innerText = formatHasanat(totalHasanat);
+      localStorage.setItem('tasbihCount', count);
+      localStorage.setItem('totalHasanat', totalHasanat);
+    }
+
+    function handleResetStart(e) {
+      if (e) e.preventDefault();
+      resetBtn.classList.add('is-active');
+      count = 0; display.textContent = count;
+      localStorage.setItem('tasbihCount', count);
+    }
+
+    countBtn.addEventListener('touchstart', handleStart, { passive: false });
+    countBtn.addEventListener('touchend', () => countBtn.classList.remove('is-active'));
+    countBtn.addEventListener('mousedown', (e) => { if (!('ontouchstart' in window)) handleStart(e); });
+    window.addEventListener('mouseup', () => countBtn.classList.remove('is-active'));
+
+    resetBtn.addEventListener('touchstart', handleResetStart, { passive: false });
+    resetBtn.addEventListener('touchend', () => resetBtn.classList.remove('is-active'));
+    resetBtn.addEventListener('mousedown', (e) => { if (!('ontouchstart' in window)) handleResetStart(e); });
+    window.addEventListener('mouseup', () => resetBtn.classList.remove('is-active'));
+
+    function openAzkar() {
+      const listDiv = document.getElementById('azkarList');
+      listDiv.innerHTML = '';
+      dhikrList.forEach((text) => {
+        listDiv.innerHTML += `<div class="dhikr-item" onclick="selectDhikr('${text}')">${text}</div>`;
+      });
+      document.getElementById('azkarOverlay').style.display = 'flex';
+    }
+
+    function selectDhikr(text) {
+      activeDhikrText = text; activeDhikrLabel.innerText = text;
+      count = 0; display.innerText = count;
+      localStorage.setItem('activeDhikr', text);
+      localStorage.setItem('tasbihCount', 0);
+      closeAzkar();
+    }
+
+    function addNewDhikr() {
+      const newTxt = prompt("أدخل الذكر الجديد:");
+      if (newTxt && newTxt.trim() !== "") {
+        dhikrList.push(newTxt);
+        localStorage.setItem('myAzkarList', JSON.stringify(dhikrList));
+      }
+    }
+
+    function changeColor(c1, c2, save = true) {
+      document.documentElement.style.setProperty('--main-color-1', c1);
+      document.documentElement.style.setProperty('--main-color-2', c2);
+      if (save) localStorage.setItem('themeColors', JSON.stringify({ c1, c2 }));
+      colorMenu.classList.remove('active');
+    }
+
+    function applyTheme(dark) {
+      if (dark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.textContent = '☀️';
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        themeToggle.textContent = '🌙';
+      }
+    }
+
+    themeToggle.addEventListener('click', function () {
+      isDark = !isDark; applyTheme(isDark);
+      localStorage.setItem('isDark', isDark);
+    });
+
+    menuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      colorMenu.classList.toggle('active');
+    });
+
+    document.addEventListener('click', () => colorMenu.classList.remove('active'));
+    function closeAzkar() { document.getElementById('azkarOverlay').style.display = 'none'; }
+
+    init();
+  </script>
+</body>
+
+</html>
